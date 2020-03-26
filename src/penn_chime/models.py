@@ -61,8 +61,8 @@ class SimSirModel:
             p.susceptible,
             infected,
             recovered,
-            beta,
             gamma,
+            beta,
             p.n_days,
         )
 
@@ -90,9 +90,12 @@ class SimSirModel:
 
 
 def sir(
-    s: float, i: float, r: float, beta: float, gamma: float, n: float
+    s: float, i: float, r: float, gamma: float, beta: float, n: float
 ) -> Tuple[float, float, float]:
-    """The SIR model, one time step."""
+    """The SIR model, one time step.
+
+    Parameter order has changed.
+    """
     s_n = (-beta * s * i) + s
     i_n = (beta * s * i - gamma * i) + i
     r_n = gamma * i + r
@@ -108,22 +111,33 @@ def sir(
 
 
 def gen_sir(
-    s: float, i: float, r: float, beta: float, gamma: float, n_days: int
+    s: float, i: float, r: float, gamma: float, *args
 ) -> Generator[Tuple[float, float, float], None, None]:
-    """Simulate SIR model forward in time yielding tuples."""
+    """Simulate SIR model forward in time yielding tuples.
+
+    Parameter order has changed to allow multiple (beta, n_days)
+    to reflect multiple changing social distancing policies.
+    """
     s, i, r = (float(v) for v in (s, i, r))
     n = s + i + r
-    for d in range(n_days + 1):
-        yield d, s, i, r
-        s, i, r = sir(s, i, r, beta, gamma, n)
+    d = 0
+    while args:
+        beta, n_days, *args = args
+        for d in range(d, d + n_days):
+            yield d, s, i, r
+            s, i, r = sir(s, i, r, gamma, beta, n)
+    yield d, s, i, r
 
 
 def sim_sir_df(
-    s: float, i: float, r: float, beta: float, gamma: float, n_days
+    s: float, i: float, r: float, gamma: float, beta: float, n_days
 ) -> pd.DataFrame:
-    """Simulate the SIR model forward in time."""
+    """Simulate the SIR model forward in time.
+
+    Parameter order has changed.
+    """
     return pd.DataFrame(
-        data=gen_sir(s, i, r, beta, gamma, n_days),
+        data=gen_sir(s, i, r, gamma, beta, n_days),
         columns=("day", "susceptible", "infected", "recovered"),
     )
 

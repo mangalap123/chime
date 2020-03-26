@@ -130,7 +130,7 @@ def test_sir():
     """
     Someone who is good at testing, help
     """
-    sir_test = sir(100, 1, 0, 0.2, 0.5, 1)
+    sir_test = sir(100, 1, 0, 0.5, 0.2, 1)
     assert sir_test == (
         0.7920792079207921,
         0.20297029702970298,
@@ -144,27 +144,27 @@ def test_sir():
 
     # Certain things should *not* work
     with pytest.raises(TypeError) as error:
-        sir("S", 1, 0, 0.2, 0.5, 1)
+        sir("S", 1, 0, 0.5, 0.2, 1)
     assert str(error.value) == "can't multiply sequence by non-int of type 'float'"
 
     with pytest.raises(TypeError) as error:
-        sir(100, "I", 0, 0.2, 0.5, 1)
+        sir(100, "I", 0, 0.5, 0.2, 1)
     assert str(error.value) == "can't multiply sequence by non-int of type 'float'"
 
     with pytest.raises(TypeError) as error:
-        sir(100, 1, "R", 0.2, 0.5, 1)
+        sir(100, 1, "R", 0.5, 0.2, 1)
     assert str(error.value) == "unsupported operand type(s) for +: 'float' and 'str'"
 
     with pytest.raises(TypeError) as error:
-        sir(100, 1, 0, "beta", 0.5, 1)
-    assert str(error.value) == "bad operand type for unary -: 'str'"
-
-    with pytest.raises(TypeError) as error:
-        sir(100, 1, 0, 0.2, "gamma", 1)
+        sir(100, 1, 0, "gamma", 0.2, 1)
     assert str(error.value) == "unsupported operand type(s) for -: 'float' and 'str'"
 
     with pytest.raises(TypeError) as error:
-        sir(100, 1, 0, 0.2, 0.5, "N")
+        sir(100, 1, 0, 0.5, "beta", 1)
+    assert str(error.value) == "bad operand type for unary -: 'str'"
+
+    with pytest.raises(TypeError) as error:
+        sir(100, 1, 0, 0.5, 0.2, "N")
     assert str(error.value) == "unsupported operand type(s) for /: 'str' and 'float'"
 
     # Zeros across the board should fail
